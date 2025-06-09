@@ -3,8 +3,11 @@
 - [Running and Deploying the Azure OpenAI API Simulator](#running-and-deploying-the-azure-openai-api-simulator)
   - [Getting Started](#getting-started)
   - [Running the Simulator Locally](#running-the-simulator-locally)
+  - [Non-Dev Container Setup](#non-dev-container-setup)
   - [Changing the Simulator Mode](#changing-the-simulator-mode)
   - [Deploying to Azure Container Apps](#deploying-to-azure-container-apps)
+  - [Deploying to Azure Kubernetes Service](#deploying-to-azure-kubernetes-service)
+    - [Deploying to Kubernetes with the Helm Chart](#deploying-to-kubernetes-with-the-helm-chart)  
   - [Running in Docker](#running-in-docker)
     - [Example: Running Container in Record Mode](#example-running-container-in-record-mode)
     - [Example: Running Container in Replay Mode](#example-running-container-in-replay-mode)
@@ -20,11 +23,8 @@ The simplest way to work with the simulator code is from within a [Dev Container
 
 This repo contains Dev Container configuration that will set up a Dev Container and install all of the dependencies needed to develop the simulator, including the Python environment and dependencies.
 
-Most of this documentation will assume that you are using a Dev Container, but it is possible to work outside of a Dev Container as well. If you are not using a Dev Container then, after cloning the repo, you can install the Python dependencies using:
-
-```console
-make install-requirements
-```
+> [!NOTE]
+> If you're not using a Dev Container, you will need to complete some additional steps. See [here](#non-dev-container-setup).
 
 ## Running the Simulator Locally
 
@@ -46,8 +46,33 @@ make install-requirements
     ```
 
     Kill the process and run the command again to restart the simulator whenever you make changes to the config.
+
 3. Now open the [http/chat-completions.http](../http/chat-completions.http) file, and send the first POST request. If you are using the rest-client extension, you may have to set the environment to `test`. Use the `>p rest client: switch environment` command in VS Code to do so.
+
 4. You should receive an http `200` response with some generated completions. Check the terminal for any warnings or errors.  
+
+## Non-Dev Container Setup
+
+Most of this documentation will assume that you are using a Dev Container, but it is possible to work outside of a Dev Container as well. If you are not using a Dev Container then, after cloning the repo, complete these additional steps:
+
+1. Create and activate a new Python environment:
+
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate
+    ```
+
+1. Install Python dependencies:
+
+    ```console
+    make install-requirements
+    ```
+
+1. Install the simulator code:
+
+    ```console
+    pip install --editable ./src/aoai-api-simulator
+    ```
 
 ## Changing the Simulator Mode
 
@@ -93,6 +118,69 @@ The ACA deployment also creates an Azure Storage account with a file share. This
 If no value is specified for `RECORDING_DIR`, the simulator will use `/mnt/simulator/recording` as the recording directory.
 
 The file share can also be used for setting the OpenAI deployment configuration or for any forwarder/generator config.
+
+## Deploying to Azure Kubernetes Service
+
+The simulated API can be deployed to Azure Kubernetes Service (AKS) to provide a publicly accessible endpoint for testing with the rest of your system.
+
+Before deploying, set up a `.env` file. See [Azure OpenAI API Simulator Configuration Options](./config.md) for details on how to do this.
+
+> [!NOTE]
+> By default, the Agent VM Size is set to 'Standard_D2s_v3'. You can change this by setting the `AGENT_VM_SIZE` environment variable in the `.env` file.
+
+Once you have your `.env` file, you can deploy to Azure using one the following commands:
+
+```console
+make deploy-aks-bicep
+```
+
+Much like the [Azure Container Apps](#deploying-to-azure-container-apps) deployment, this will deploy an Azure Container Registry, build and push the simulator image to it, and deploy the simulator to Azure Kubernetes Service with the settings from `.env`.
+
+The workload deployment is done using Helm. The Helm chart is located in [`infra/helm/aoaisim`](../infra/helm/aoaisim/). Details on the Helm chart can be found [here](#deploying-to-kubernetes-with-the-helm-chart).
+
+The AKS deployment also creates an Azure Storage account with a file share. Using [`azure-files-csi`](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi) the file share is mounted into the simulator container as `/mnt/simulator`.
+
+If no value is specified for `RECORDING_DIR`, the simulator will use `/mnt/simulator/recording` as the recording directory.
+
+The file share can also be used for setting the OpenAI deployment configuration or for any forwarder/generator config.
+
+### Deploying to Kubernetes with the Helm Chart
+
+This project maintains a Helm chart for deploying the simulator to Kubernetes. The Helm chart is located in [`infra/helm/aoaisim`](../infra/helm/aoaisim/). The chart has a dependency on [`csi-secrets-store-driver`](https://learn.microsoft.com/en-us/azure/aks/csi-secrets-store-driver) and [`azure-files-csi`](https://learn.microsoft.com/en-us/azure/aks/azure-files-csi).
+
+To deploy the simulator to Kubernetes using the Helm chart, you can use the following command:
+
+```console
+helm upgrade --install aoaisim ./infra/helm/aoaisim
+```
+
+Custom values can be set using the `--set` flag. For example, to set the `SIMULATOR_MODE` environment variable to `record`, you can use the following command:
+
+```console
+helm upgrade --install aoaisim ./infra/helm/aoaisim --set config.simulatorMode=record
+```
+
+The following table lists the key configurable parameters of the Helm chart.
+
+| Parameter | Description |
+| --------- | ----------- |
+| `image.repository` | The container image repository |
+| `image.tag` | The container image tag |
+| `config.simulatorMode` | The simulator mode |
+| `config.recordingDir` | The recording directory |
+| `config.recordingAutoSave` | Whether to autosave recordings |
+| `config.extensionPath` | The path to the extension file |
+| `config.azureOpenAIEndpoint` | The Azure OpenAI endpoint |
+| `config.logLevel` | The log level |
+| `keyVault.name` | The name of the Key Vault where `SIMULATOR_API_KEY` and `AZURE_OPENAI_KEY` can be found. |
+| `keyVault.tenantId` | The tenant ID of the Managed Identity to access Azure Key Vault. |
+| `keyVault.clientId` | The client ID of the Managed Identity to access Azure Key Vault. |
+| `azureFiles.resourceGroup` | The resource group for the Azure Files storage account. |
+| `azureFiles.azureStorageAccountName` | The name of the Azure Files storage account. |
+| `azureFiles.azureStorageAccountKey` | The access key for the Azure Files storage account. |
+| `azureFiles.fileShareName` | The name of the Azure Files file share. |
+
+Additional parameters can be found in the [`values.yaml`](../infra/helm/aoaisim/values.yaml) file.
 
 ## Running in Docker
 
