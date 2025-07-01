@@ -151,7 +151,7 @@ def config_patch(config: dict, _: Annotated[bool, Depends(_default_validate_api_
 
 
 @app.api_route("/{full_path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def catchall(request: Request):
+async def catchall(request: Request, _: Annotated[bool, Depends(_default_validate_api_key_header)]):
     logger.debug("⚡ handling route: %s", request.url.path)
 
     response = None

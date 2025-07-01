@@ -1,0 +1,15 @@
+{
+    "deployment1" : {
+        "model": "gpt-4.0",
+        "tokensPerMinute" : 60000
+    },
+    "gpt-4.1" : {
+        "model": "gpt-4.1",
+        "tokensPerMinute" : 1000
+    },
+    "text-embedding-3-small": {
+        "model": "text-embedding-3-small",
+        "tokensPerMinute" : 10000,
+        "embeddingSize": 512
+    }
+}

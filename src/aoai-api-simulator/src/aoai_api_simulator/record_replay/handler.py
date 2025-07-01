@@ -120,8 +120,10 @@ class RecordReplayHandler:
 
         if recording:
             # request_hash = await get_request_hash(request)
+            logger.debug("Recording found for request %s %s", request.method, url)
             response_info = recording.get(request_hash)
             if response_info:
+                logger.debug("Recorded response found for request %s %s", request.method, url)
                 headers = {k: v[0] for k, v in response_info.headers.items()}
                 for key, value in response_info.context_values.items():
                     context.values[key] = value

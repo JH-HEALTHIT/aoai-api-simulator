@@ -2,6 +2,8 @@ from aoai_api_simulator.models import OpenAIChatModel, OpenAIEmbeddingModel, Ope
 
 model_catalogue = {
     "gpt-4.1": OpenAIChatModel(name="gpt-4.1"),
+    "gpt-4.o": OpenAIChatModel(name="gpt-4.o"),
+    "o4-mini": OpenAIChatModel(name="o4-mini"),
     "gpt-3.5-turbo": OpenAIChatModel(name="gpt-3.5-turbo"),
     "gpt-3.5-turbo-0613": OpenAIChatModel(name="gpt-3.5-turbo-0613"),
     "text-embedding-ada-001": OpenAIEmbeddingModel(name="text-embedding-ada-001", supports_custom_dimensions=False),
