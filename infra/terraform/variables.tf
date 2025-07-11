@@ -1,71 +1,100 @@
-variable "azure_subscription_id" {
-  description = "The Azure subscription ID"
+##-----------------------------------------------------------------------------
+## Optional
+##-----------------------------------------------------------------------------
+variable "target_subscription_id" {
   type        = string
-  
+  nullable    = false
+  default     = "a0a4da4d-ddc2-45c9-9af9-f772abd9cca1"
+  description = "The target Azure Subscription ID."
 }
 
-variable "resource_group_name" {
-  description = "The name of the resource group to create"
+variable "prefix" {
   type        = string
+  nullable    = false
+  default     = "aoaisim"
+  description = "Prefix for Azure resource names. (default: aoaisim)"
 }
 
-variable "location" {
-  description = "The location of the resource group to create"
+variable "region" {
   type        = string
+  nullable    = false
+  default     = "eastus"
+  description = "Azure location where the resources will be created. (default: eastus)"
 }
 
-variable "base_name" {
-  description = "The base name for resources"
+variable "account_replication_type" {
   type        = string
-  
+  nullable    = false
+  default     = "LRS"
+  description = "Defines the type of replication to use for this storage account. Valid options are LRS, GRS, RAGRS, ZRS, GZRS and RAGZRS."
 }
 
-variable simulator_image_tag {
-  description = "The tag for the simulator image"
+variable "aks_cluster_name" {
   type        = string
+  nullable    = false
+  default     = "pm-dev-aks"
+  description = "Name of the PMAP AKS cluster to use."
 }
 
-variable "simulator_mode" {
-  description = "The mode for the simulator"
+variable "aks_cluster_rg" {
   type        = string
+  nullable    = false
+  default     = "pm-dev-aks-rg"
+  description = "Resource Group of the PMAP AKS cluster to use."
 }
 
-variable "simulator_api_key" {
-  description = "The API key for the simulator"
+variable "openai_account_name" {
   type        = string
+  nullable    = false
+  default     = "aigateway-llm-dev-oai-eastus"
+  description = "Name of the Azure OpenAI account to use."
 }
 
-variable "recording_dir" {
-  description = "The directory for recordings"
+variable "openai_account_rg" {
   type        = string
+  nullable    = false
+  default     = "aigateway-dev-rg"
+  description = "Resource Group of the Azure OpenAI account to use."
 }
 
-variable "recording_auto_save" {
-  description = "The directory for auto saving recordings"
-  type        = string
+variable "additional_tags" {
+  type        = map(any)
+  description = <<-EOT
+    Additional tags to apply to resources. These tags will be merged with the default tags.
+    See "Tagging Conventions" Document - https://confluence.jh.edu/x/FJe9F.
+  EOT
+  default     = {}
 }
 
-variable "extension_path" {
-  description = "The path to the extension"
+variable "storage_account_tier" {
   type        = string
+  nullable    = true
+  description = "Defines the Tier to use for this storage account. Valid options are Standard and Premium."
+  default     = "Standard"
 }
 
-variable "azure_openai_endpoint" {
-  description = "The endpoint for the OpenAI service"
-  type        = string
+variable "allowed_ip_ranges" {
+  type        = list(any)
+  description = "List of public IP or IP ranges in CIDR Format that are allowed to access Azure resources. Only IPv4 addresses are allowed. Default includes commonly used JH IPs for access and Azure DevOps."
+  default = [
+    "162.129.0.0/16",
+    "128.220.0.0/16",
+    "198.57.32.0/21",
+    "198.57.40.0/22",
+    "204.124.184.0/22",
+    "20.37.158.0/23", # DevOps Central US https://learn.microsoft.com/en-us/azure/devops/organizations/security/allow-list-ip-url?view=azure-devops&tabs=IP-V4#inbound-connections
+  ]
 }
 
-variable "azure_openai_key" {
-  description = "The key for the OpenAI service"
-  type        = string
+## AKS
+variable "namespace_annotations" {
+  type        = map(any)
+  description = "An unstructured key value map stored with the namespace that may be used to store arbitrary metadata."
+  default     = {}
 }
 
-variable "log_level" {
-  description = "The log level for the simulator"
-  type        = string
-}
-
-variable "current_user_principal_id" {
-  description = "The current user principal ID"
-  type        = string
+variable "additional_namespace_labels" {
+  type        = map(any)
+  description = "Map of string keys and values that can be used to organize and categorize (scope and select) namespaces. May match selectors of replication controllers and services."
+  default     = {}
 }
