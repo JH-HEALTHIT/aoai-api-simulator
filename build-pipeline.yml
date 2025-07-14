@@ -1,0 +1,46 @@
+trigger:
+  batch: true
+  tags:
+    include:
+      - build/v*.*.*-*
+pr: none
+
+pool:
+  name: 'hgr-devops-pool'
+
+variables:
+  - name: imageName
+    value: 'hgr-aoai-simulator'
+  - name: containerRegistryService
+    value: 'jhpmap'
+
+stages:
+  - stage: Build
+    displayName: 'Build & Push to ACR'
+    jobs:
+      - job: Build
+        displayName: 'Build Job'
+        steps:
+          - task: Bash@3
+            displayName: "Extract Version Tag"
+            env:
+              SOURCE_BRANCH: $(Build.SourceBranchName)
+            inputs:
+              targetType: 'inline'
+              script: |
+                #!/bin/bash
+                echo "Extracting version tag"
+                pattern='v(.*)-.*'
+                [[ $SOURCE_BRANCH =~ $pattern ]]
+                export IMAGE_TAG=${BASH_REMATCH[1]}
+                echo "##vso[task.setvariable variable=versionTag;]$IMAGE_TAG"
+          - task: Docker@2
+            displayName: 'Push Docker Image to ACR'
+            inputs:
+              containerRegistry: $(containerRegistryService)
+              repository: $(imageName)
+              command: 'buildAndPush'
+              Dockerfile: './src/aoai-api-simulator/Dockerfile'
+              buildContext: './src/aoai-api-simulator'
+              tags: |
+                $(versionTag)

@@ -24,7 +24,10 @@ locals {
   tags = merge(local.default_tags, var.additional_tags)
 
   default_namespace_labels = {
-    "app.kubernetes.io/managed-by" = "terraform"
+    "app.kubernetes.io/managed-by" = "terraform",
+    "app.kubernetes.io/name"       = "hgr-aoaisim-dev",
+    "app.kubernetes.io/instance"   = "hgr-aoaisim-dev",
+    "app.kubernetes.io/component"  = "hgr-aoaisim-dev"
   }
 }
 
