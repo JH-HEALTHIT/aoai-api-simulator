@@ -16,6 +16,31 @@ resource "azurerm_key_vault" "kv" {
   }
 }
 
+##-----------------------------------------------------------------------------
+## Private endpoint
+##-----------------------------------------------------------------------------
+resource "azurerm_private_endpoint" "kv" {
+  name                          = "hgr-${var.prefix}-kv-pe"
+  custom_network_interface_name = "hgr-${var.prefix}-kv-pe-nic"
+  location                      = azurerm_resource_group.rg.location
+  resource_group_name           = azurerm_resource_group.rg.name
+  subnet_id                     = data.azurerm_subnet.hgr-default.id
+  tags                          = local.tags
+
+  private_service_connection {
+    name                           = "hgr-${var.prefix}-kv-pe"
+    private_connection_resource_id = azurerm_key_vault.kv.id
+    subresource_names              = ["vault"]
+    is_manual_connection           = false
+  }
+
+  private_dns_zone_group {
+    name                 = "default"
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.keyvault.id]
+  }
+}
+
+
 resource "azurerm_key_vault_secret" "openai_key" {
   depends_on   = [azurerm_role_assignment.kv_role_assignments]
   name         = "azure-openai-key"

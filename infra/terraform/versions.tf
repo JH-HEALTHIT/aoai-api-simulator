@@ -5,22 +5,27 @@ terraform {
     # https://registry.terraform.io/providers/hashicorp/azuread/latest
     azuread = {
       source  = "hashicorp/azuread"
-      version = "~> 3.0.2"
+      version = "~> 3.4"
     }
     # https://registry.terraform.io/providers/hashicorp/azurerm/latest
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.23"
+      version = "~> 4.36"
+    }
+    # https://registry.terraform.io/providers/hashicorp/helm/latest
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 3.0"
     }
     # https://registry.terraform.io/providers/hashicorp/kubernetes/latest
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.25"
+      version = "~> 2.37"
     }
     # https://registry.terraform.io/providers/hashicorp/random/latest
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.6"
+      version = "~> 3.7"
     }
   }
 
@@ -45,11 +50,26 @@ provider "azurerm" {
 }
 
 provider "azurerm" {
+  alias                           = "esg"
+  resource_provider_registrations = "none"
+  subscription_id                 = local.esg_subscription_id
+
+  features {}
+}
+
+provider "azurerm" {
   alias                           = "pmap"
   resource_provider_registrations = "none"
   subscription_id                 = local.pmap_subscription_id
 
   features {}
+}
+
+provider "helm" {
+  kubernetes = {
+    config_path    = "~/.kube/config"
+    config_context = var.aks_cluster_name
+  }
 }
 
 provider "kubernetes" {

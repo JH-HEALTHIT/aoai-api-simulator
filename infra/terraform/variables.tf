@@ -43,6 +43,27 @@ variable "aks_cluster_rg" {
   description = "Resource Group of the PMAP AKS cluster to use."
 }
 
+variable "hgr_vnet_name" {
+  type        = string
+  nullable    = false
+  default     = "AZ-East-JH-HEALTHIT-PROD-10-209-4-0_24"
+  description = "The name of the VNET that hosts HGR."
+}
+
+variable "hgr_vnet_rg" {
+  type        = string
+  nullable    = false
+  default     = "JH-HEALTHIT-PROD-RG"
+  description = "Resource Group of the VNET that hosts HGR."
+}
+
+variable "hgr_snet_default_name" {
+  type        = string
+  nullable    = false
+  default     = "hgr-nonprod-snet-10-209-4-0_26"
+  description = "The name of the default subnet in the HGR VNET."
+}
+
 variable "openai_account_name" {
   type        = string
   nullable    = false

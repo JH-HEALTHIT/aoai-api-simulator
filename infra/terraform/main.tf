@@ -3,6 +3,7 @@ data "azurerm_client_config" "current" {}
 locals {
   # These values will not change at run time hence not making them configurable variables
   # The values of the Subscription IDs will not change at run time hence not making them configurable variables
+  esg_subscription_id  = "9acba645-cdeb-4c07-87d7-5197d0858c58"
   pmap_subscription_id = "d238c5e1-9db0-4605-a0c6-e8d0af3ecf8d"
 
   # Default set of tags to apply to resources. These tags will be merged with any additional tags provided.
