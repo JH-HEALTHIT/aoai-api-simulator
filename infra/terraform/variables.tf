@@ -67,14 +67,14 @@ variable "hgr_snet_default_name" {
 variable "openai_account_name" {
   type        = string
   nullable    = false
-  default     = "aigateway-llm-dev-oai-eastus"
+  default     = "aigateway-llm-test-oai-eastus"
   description = "Name of the Azure OpenAI account to use."
 }
 
 variable "openai_account_rg" {
   type        = string
   nullable    = false
-  default     = "aigateway-dev-rg"
+  default     = "aigateway-test-rg"
   description = "Resource Group of the Azure OpenAI account to use."
 }
 

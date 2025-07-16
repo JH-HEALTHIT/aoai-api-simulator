@@ -28,7 +28,12 @@ resource "helm_release" "hgr-aoai-simulator" {
     })
   ]
 
-  depends_on = [kubernetes_namespace.hgr-sim]
+  depends_on = [
+    kubernetes_namespace.hgr-sim,
+    azurerm_key_vault_secret.app_insights,
+    azurerm_key_vault_secret.openai_key,
+    azurerm_key_vault_secret.simulator_api_key
+  ]
 }
 
 ##-----------------------------------------------------------------------------
