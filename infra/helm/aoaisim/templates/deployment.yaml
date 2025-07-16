@@ -13,11 +13,11 @@ spec:
       {{- include "aoaisim.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
         checksum/config: {{ .Files.Get ".openai_deployment_config.json" | sha256sum }}
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "aoaisim.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
