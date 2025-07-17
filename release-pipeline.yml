@@ -1,0 +1,103 @@
+trigger:
+  batch: true
+  tags:
+    include:
+      - release/v*.*.*-*
+pr: none
+
+pool:
+  name: 'hgr-devops-pool'
+
+variables:
+  - group: 'hgr-aoai-simulator-dev'
+
+stages:
+  - stage: Release
+    displayName: 'Deploy to AKS'
+    jobs:
+      - job: Release
+        displayName: 'Release Job'
+        steps:
+          # Install Kubernetes
+          - task: KubectlInstaller@0
+            displayName: "Install Kubectl"
+            inputs:
+              kubectlVersion: 'latest'
+          # Install Helm
+          - task: HelmInstaller@1
+            displayName: Install Helm
+            inputs:
+              helmVersionToInstall: '3.18.4'
+          - task: Bash@3
+            displayName: "Create Overrides"
+            env:
+              SOURCE_BRANCH: $(Build.SourceBranchName)
+            inputs:
+              targetType: 'inline'
+              script: |
+                #!/bin/bash
+                echo "Extracting version tag"
+                pattern='v(.*)-.*'
+                [[ $SOURCE_BRANCH =~ $pattern ]]
+                export IMAGE_TAG=${BASH_REMATCH[1]}
+                echo "Version tag: $IMAGE_TAG"
+
+                echo "Creating overrideValues.yaml file"
+                cat > overrideValues.yaml <<- EOM
+                azureFiles:
+                  resourceGroup: "${{ variables.resourceGroup }}"
+                  azureStorageAccountName: "${{ variables.storageName }}"
+                  azureStorageAccountKey: "${{ variables.storageKey }}"
+                  fileShareName: "${{ variables.storageShare }}"
+                config:
+                  simulatorMode: "record"
+                  recordingDir: "/mnt/simulator-storage/recording"
+                  recordingAutoSave: "True"
+                  azureOpenAIEndpoint: "${{ variables.openAIEndpoint }}"
+                  logLevel: "INFO"
+                image:
+                  repository: "jhpmap.azurecr.io/hgr-aoai-simulator"
+                  tag: "$IMAGE_TAG"
+                ingress:
+                  enabled: true
+                  className: "${{ variables.ingressClass }}"
+                  hosts:
+                    - host: "${{ variables.hostname }}"
+                      paths:
+                        - path: /
+                          pathType: ImplementationSpecific
+                  tls:
+                    - secretName: pm-jh-edu-tls
+                      hosts:
+                        - ${{ variables.hostname }}
+                keyVault:
+                  tenantId: "${{ variables.tenantId }}"
+                  clientId: "${{ variables.clientId }}"
+                  name: "${{ variables.keyVaultName }}"
+                service:
+                  type: ClusterIP
+                EOM
+                echo "File created"
+          - task: HelmDeploy@1
+            displayName: Helm upgrade (dry run with debug)
+            inputs:
+              connectionType: 'KubernetesServiceConnection'
+              kubernetesServiceEndpoint: 'pm-dev-aks'
+              namespace: '${{ variables.namespace }}'
+              command: 'upgrade'
+              chartName: './infra/helm/aoaisim'
+              releaseName: 'hgr-aoai-simulator'
+              valueFile: 'overrideValues.yaml'
+              arguments: '--debug --dry-run'
+          # - task: HelmDeploy@1
+          #   displayName: Helm upgrade
+          #   inputs:
+          #     connectionType: 'KubernetesServiceConnection'
+          #     kubernetesServiceEndpoint: 'pm-dev-aks'
+          #     namespace: '${{ variables.namespace }}'
+          #     command: 'upgrade'
+          #     chartName: './infra/helm/aoaisim'
+          #     releaseName: 'hgr-aoai-simulator'
+          #     valueFile: 'overrideValues.yaml'
+          #     arguments: '--timeout 600s'
+                

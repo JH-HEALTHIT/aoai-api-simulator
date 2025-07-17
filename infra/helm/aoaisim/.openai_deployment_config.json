@@ -1,0 +1,10 @@
+{
+    "gpt-4.o-5M" : {
+        "model": "gpt-4.o",
+        "tokensPerMinute" : 5000000
+    },
+    "o4-mini-1M" : {
+        "model": "o4-mini",
+        "tokensPerMinute" : 1000000
+    }
+}
