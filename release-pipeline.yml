@@ -90,15 +90,15 @@ stages:
               releaseName: 'hgr-aoai-simulator'
               valueFile: 'overrideValues.yaml'
               arguments: '--debug --dry-run'
-          # - task: HelmDeploy@1
-          #   displayName: Helm upgrade
-          #   inputs:
-          #     connectionType: 'KubernetesServiceConnection'
-          #     kubernetesServiceEndpoint: 'pm-dev-aks'
-          #     namespace: '$(namespace)'
-          #     command: 'upgrade'
-          #     chartName: './infra/helm/aoaisim'
-          #     releaseName: 'hgr-aoai-simulator'
-          #     valueFile: 'overrideValues.yaml'
-          #     arguments: '--timeout 600s'
+          - task: HelmDeploy@1
+            displayName: Helm upgrade
+            inputs:
+              connectionType: 'KubernetesServiceConnection'
+              kubernetesServiceEndpoint: 'pm-dev-aks'
+              namespace: '$(namespace)'
+              command: 'upgrade'
+              chartName: './infra/helm/aoaisim'
+              releaseName: 'hgr-aoai-simulator'
+              valueFile: 'overrideValues.yaml'
+              arguments: '--timeout 600s'
                 
