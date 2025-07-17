@@ -14,7 +14,8 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ .Files.Get ".openai_deployment_config.json" | sha256sum }}
+        checksum/openai: {{ .Files.Get ".openai_deployment_config.json" | sha256sum }}
+        checksum/values: {{ tpl (toYaml .Values) . | sha256sum }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
