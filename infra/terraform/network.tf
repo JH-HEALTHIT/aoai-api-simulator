@@ -4,6 +4,13 @@ data "azurerm_subnet" "hgr-default" {
   resource_group_name  = var.hgr_vnet_rg
 }
 
+data "azurerm_subnet" "pmap-aks" {
+  provider             = azurerm.pmap
+  name                 = var.pmap_snet_name
+  virtual_network_name = var.pmap_vnet_name
+  resource_group_name  = var.pmap_vnet_rg
+}
+
 data "azurerm_private_dns_zone" "file" {
   provider            = azurerm.esg
   name                = "privatelink.file.core.windows.net"

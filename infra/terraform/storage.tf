@@ -9,8 +9,9 @@ resource "azurerm_storage_account" "storage" {
   tags                            = local.tags
 
   network_rules {
-    default_action = "Deny"
-    ip_rules       = var.allowed_ip_ranges
+    default_action             = "Deny"
+    ip_rules                   = var.allowed_ip_ranges
+    virtual_network_subnet_ids = [data.azurerm_subnet.pmap-aks.id]
   }
 
   blob_properties {

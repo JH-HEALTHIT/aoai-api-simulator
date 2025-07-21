@@ -64,6 +64,27 @@ variable "hgr_snet_default_name" {
   description = "The name of the default subnet in the HGR VNET."
 }
 
+variable "pmap_vnet_name" {
+  type        = string
+  nullable    = false
+  default     = "AZ-East-JH-PMAP-PROD-10.158.128.0-20"
+  description = "The name of the VNET that hosts the PMAP cluster."
+}
+
+variable "pmap_vnet_rg" {
+  type        = string
+  nullable    = false
+  default     = "JH-PMAP-PROD-RG"
+  description = "Resource Group of the VNET that hosts the PMAP cluster."
+}
+
+variable "pmap_snet_name" {
+  type        = string
+  nullable    = false
+  default     = "AZ-East-JH-PMAP-PROD-10.158.140.0-22"
+  description = "The name of the subnet for the PMAP cluster."
+}
+
 variable "openai_account_name" {
   type        = string
   nullable    = false
