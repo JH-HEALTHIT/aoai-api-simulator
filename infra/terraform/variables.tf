@@ -36,6 +36,13 @@ variable "aks_cluster_name" {
   description = "Name of the HIT AKS cluster to use."
 }
 
+variable "aks_cluster_id_name" {
+  type        = string
+  nullable    = false
+  default     = "hit-nonprod-aks-id"
+  description = "Name of the HIT AKS cluster ID to use."
+}
+
 variable "aks_cluster_rg" {
   type        = string
   nullable    = false

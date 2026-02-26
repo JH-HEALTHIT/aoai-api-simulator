@@ -38,6 +38,12 @@ data "azurerm_kubernetes_cluster" "hit" {
   resource_group_name = var.aks_cluster_rg
 }
 
+data "azurerm_user_assigned_identity" "hit_aks" {
+  provider            = azurerm.hit
+  name                = var.aks_cluster_id_name
+  resource_group_name = var.aks_cluster_rg
+}
+
 data "azurerm_cognitive_account" "openai" {
   name                = var.openai_account_name
   resource_group_name = var.openai_account_rg

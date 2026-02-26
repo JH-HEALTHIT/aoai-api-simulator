@@ -92,7 +92,12 @@ locals {
   }
   kv_roles_objects = {
     "Key Vault Secrets User" = [
-      data.azurerm_kubernetes_cluster.hit.kubelet_identity[0]
+      data.azurerm_kubernetes_cluster.hit.kubelet_identity[0],
+    ]
+  }
+  kv_roles_principals = {
+    "Key Vault Secrets User" = [
+      data.azurerm_user_assigned_identity.hit_aks
     ]
   }
 
@@ -120,7 +125,19 @@ locals {
     ]
   ])
 
-  combined_roles = concat(local.flattened_ad_groups, local.flattened_kv_roles)
+  # Flatten the map into a list of maps
+  flattened_kv_pcp_roles = flatten([
+    for role, identities in local.kv_roles_principals : [
+      for identity in identities : {
+        role           = role
+        name           = identity.client_id
+        object_id      = identity.principal_id
+        principal_type = "ServicePrincipal"
+      }
+    ]
+  ])
+
+  combined_roles = concat(local.flattened_ad_groups, local.flattened_kv_roles, local.flattened_kv_pcp_roles)
 }
 
 # Create multiple azurerm_role_assignment instances using a loop
