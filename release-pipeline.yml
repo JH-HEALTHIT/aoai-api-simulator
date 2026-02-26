@@ -27,7 +27,7 @@ stages:
           - task: HelmInstaller@1
             displayName: Install Helm
             inputs:
-              helmVersionToInstall: '3.18.4'
+              helmVersionToInstall: '4.1.1'
           - task: Bash@3
             displayName: "Create Overrides"
             env:
@@ -83,7 +83,7 @@ stages:
             displayName: Helm upgrade (dry run with debug)
             inputs:
               connectionType: 'KubernetesServiceConnection'
-              kubernetesServiceEndpoint: 'pm-dev-aks'
+              kubernetesServiceEndpoint: 'hit-nonprod-aks'
               namespace: '$(namespace)'
               command: 'upgrade'
               chartName: './infra/helm/aoaisim'
@@ -94,7 +94,7 @@ stages:
             displayName: Helm upgrade
             inputs:
               connectionType: 'KubernetesServiceConnection'
-              kubernetesServiceEndpoint: 'pm-dev-aks'
+              kubernetesServiceEndpoint: 'hit-nonprod-aks'
               namespace: '$(namespace)'
               command: 'upgrade'
               chartName: './infra/helm/aoaisim'

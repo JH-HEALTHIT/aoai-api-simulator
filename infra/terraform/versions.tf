@@ -20,7 +20,7 @@ terraform {
     # https://registry.terraform.io/providers/hashicorp/kubernetes/latest
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.37"
+      version = "~> 3.0"
     }
     # https://registry.terraform.io/providers/hashicorp/random/latest
     random = {
@@ -58,9 +58,9 @@ provider "azurerm" {
 }
 
 provider "azurerm" {
-  alias                           = "pmap"
+  alias                           = "hit"
   resource_provider_registrations = "none"
-  subscription_id                 = local.pmap_subscription_id
+  subscription_id                 = local.hit_subscription_id
 
   features {}
 }

@@ -6,7 +6,7 @@ resource "azurerm_key_vault" "kv" {
   sku_name                      = "standard"
   tags                          = local.tags
   purge_protection_enabled      = true
-  enable_rbac_authorization     = true
+  rbac_authorization_enabled    = true
   public_network_access_enabled = true
 
   network_acls {
@@ -92,7 +92,7 @@ locals {
   }
   kv_roles_objects = {
     "Key Vault Secrets User" = [
-      data.azurerm_kubernetes_cluster.pmap.kubelet_identity[0]
+      data.azurerm_kubernetes_cluster.hit.kubelet_identity[0]
     ]
   }
 

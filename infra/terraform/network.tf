@@ -4,11 +4,11 @@ data "azurerm_subnet" "hgr-default" {
   resource_group_name  = var.hgr_vnet_rg
 }
 
-data "azurerm_subnet" "pmap-aks" {
-  provider             = azurerm.pmap
-  name                 = var.pmap_snet_name
-  virtual_network_name = var.pmap_vnet_name
-  resource_group_name  = var.pmap_vnet_rg
+data "azurerm_subnet" "hit-aks" {
+  provider             = azurerm.hit
+  name                 = var.hit_snet_name
+  virtual_network_name = var.hit_vnet_name
+  resource_group_name  = var.hit_vnet_rg
 }
 
 data "azurerm_private_dns_zone" "file" {

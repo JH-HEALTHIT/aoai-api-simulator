@@ -32,15 +32,15 @@ variable "account_replication_type" {
 variable "aks_cluster_name" {
   type        = string
   nullable    = false
-  default     = "pm-dev-aks"
-  description = "Name of the PMAP AKS cluster to use."
+  default     = "hit-nonprod-aks"
+  description = "Name of the HIT AKS cluster to use."
 }
 
 variable "aks_cluster_rg" {
   type        = string
   nullable    = false
-  default     = "pm-dev-aks-rg"
-  description = "Resource Group of the PMAP AKS cluster to use."
+  default     = "hit-nonprod-aks-rg"
+  description = "Resource Group of the HIT AKS cluster to use."
 }
 
 variable "hgr_vnet_name" {
@@ -64,25 +64,25 @@ variable "hgr_snet_default_name" {
   description = "The name of the default subnet in the HGR VNET."
 }
 
-variable "pmap_vnet_name" {
+variable "hit_vnet_name" {
   type        = string
   nullable    = false
-  default     = "AZ-East-JH-PMAP-PROD-10.158.128.0-20"
-  description = "The name of the VNET that hosts the PMAP cluster."
+  default     = "AZ-East-JH-HIT-PLATFORM-PROD-10.208.137.0-24"
+  description = "The name of the VNET that hosts the HIT cluster."
 }
 
-variable "pmap_vnet_rg" {
+variable "hit_vnet_rg" {
   type        = string
   nullable    = false
-  default     = "JH-PMAP-PROD-RG"
-  description = "Resource Group of the VNET that hosts the PMAP cluster."
+  default     = "INFRASTRUCTURE-SVI-USE-ONLY-RG"
+  description = "Resource Group of the VNET that hosts the HIT cluster."
 }
 
-variable "pmap_snet_name" {
+variable "hit_snet_name" {
   type        = string
   nullable    = false
-  default     = "AZ-East-JH-PMAP-PROD-10.158.140.0-22"
-  description = "The name of the subnet for the PMAP cluster."
+  default     = "hit-nonprod-aks-snet"
+  description = "The name of the subnet for the HIT cluster."
 }
 
 variable "openai_account_name" {

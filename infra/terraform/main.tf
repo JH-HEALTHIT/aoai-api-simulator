@@ -3,8 +3,8 @@ data "azurerm_client_config" "current" {}
 locals {
   # These values will not change at run time hence not making them configurable variables
   # The values of the Subscription IDs will not change at run time hence not making them configurable variables
-  esg_subscription_id  = "9acba645-cdeb-4c07-87d7-5197d0858c58"
-  pmap_subscription_id = "d238c5e1-9db0-4605-a0c6-e8d0af3ecf8d"
+  esg_subscription_id = "9acba645-cdeb-4c07-87d7-5197d0858c58"
+  hit_subscription_id = "55fbf412-20d9-4c4e-bef3-78958e1188db"
 
   # Default set of tags to apply to resources. These tags will be merged with any additional tags provided.
   # See "Tagging Conventions" Document - https://confluence.jh.edu/x/FJe9F.
@@ -32,8 +32,8 @@ locals {
   }
 }
 
-data "azurerm_kubernetes_cluster" "pmap" {
-  provider            = azurerm.pmap
+data "azurerm_kubernetes_cluster" "hit" {
+  provider            = azurerm.hit
   name                = var.aks_cluster_name
   resource_group_name = var.aks_cluster_rg
 }

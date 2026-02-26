@@ -11,7 +11,7 @@ resource "azurerm_storage_account" "storage" {
   network_rules {
     default_action             = "Deny"
     ip_rules                   = var.allowed_ip_ranges
-    virtual_network_subnet_ids = [data.azurerm_subnet.pmap-aks.id]
+    virtual_network_subnet_ids = [data.azurerm_subnet.hit-aks.id]
   }
 
   blob_properties {
